@@ -1,0 +1,66 @@
+#!/usr/bin/env ruby
+require 'nokogiri'
+require 'fileutils'
+
+feed = Nokogiri::XML ARGF
+
+Video = Struct.new(:enclosure) do
+  def name
+    File.basename url
+  end
+
+  def url
+    enclosure['url']
+  end
+
+  def size
+    enclosure['length'].to_i
+  end
+end
+
+Episode = Struct.new(:num, :title, :html_body, :video) do
+  def sanitized_title
+    title.gsub(/\W+/, '-').gsub(/^-|-$/, '')
+  end
+
+  def video_name
+    video.name
+  end
+
+  def video_url
+    video.url
+  end
+end
+
+tapas = []
+
+feed.xpath('/rss/channel/item').each do |item|
+  title = item.at_xpath('./title').text
+  if title.sub!(/^(\d+):?\s+/, '')
+    title.strip!
+    ep_num = $1.to_i
+    html_body = item.at_xpath('./description').text
+    video = Video.new item.at_xpath('./enclosure')
+    ep = Episode.new(ep_num, title, html_body, video)
+    tapas << ep
+  end
+end
+
+tapas.each do |ep|
+  ep_dir = 'episodes/%04d-%s' % [ep.num, ep.sanitized_title]
+  media_dest = 'media/%s' % ep.video_name
+  next if File.directory? ep_dir
+
+  FileUtils.mkdir_p ep_dir
+
+  Dir.chdir ep_dir do
+    File.open('index.html', 'w') do |html|
+      html.puts "<h1>#{ep.num}: #{ep.title}</h1>"
+      html << ep.html_body.to_s
+      puts "> #{ep_dir}/#{html.path}" if ENV['VERBOSE']
+    end
+    File.open('video-url', 'w') {|u| u << ep.video_url }
+  end
+
+  system './fetch', ep.video_url, media_dest
+end

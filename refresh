@@ -1,0 +1,7 @@
+#!/bin/bash
+set -e
+
+export VERBOSE=1
+
+./fetch "https://rubytapas.dpdcart.com/feed" feed.xml
+./parse-feed feed.xml
