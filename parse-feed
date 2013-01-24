@@ -48,7 +48,7 @@ end
 
 tapas.each do |ep|
   ep_dir = 'episodes/%04d-%s' % [ep.num, ep.sanitized_title]
-  media_dest = 'media/%s' % ep.video_name
+  media_dest = 'public/media/%s' % ep.video_name
   next if File.directory? ep_dir
 
   FileUtils.mkdir_p ep_dir
