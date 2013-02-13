@@ -1,0 +1,6 @@
+.bundle
+.ruby-version
+episodes/
+public/media/
+tmp/
+feed.xml

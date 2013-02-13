@@ -3,6 +3,7 @@ set -e
 
 src="${1?}"
 dest="${2?}"
+shift 2
 
 [[ -n $VERBOSE ]] && echo GET "$src"
-exec curl -fsS --netrc "$src" -z "$dest" -o "$dest"
+exec curl -fsS --netrc "$src" -z "$dest" -o "$dest" "$@"
