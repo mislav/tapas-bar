@@ -62,5 +62,7 @@ tapas.each do |ep|
     File.open('video-url', 'w') {|u| u << ep.video_url }
   end
 
-  system './fetch', ep.video_url, media_dest
+  unless ENV['NO_DOWNLOAD']
+    system './fetch', ep.video_url, media_dest
+  end
 end
