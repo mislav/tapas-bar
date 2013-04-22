@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+require_relative './app'
+require 'fileutils'
+
+Episode.all.each do |ep|
+  video_file = "public/#{ep.local_video_url}"
+  next unless ep.watched? && File.exist?(video_file)
+  begin
+    FileUtils.rm video_file, :verbose => true
+  rescue Errno::ENOENT
+    warn "error removing #{video_file}"
+  end
+end
