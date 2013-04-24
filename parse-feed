@@ -64,6 +64,7 @@ tapas.each do |ep|
   end
 
   unless ENV['NO_DOWNLOAD']
+    FileUtils.mkdir_p 'public/media'
     system './fetch', ep.video_url, media_dest
   end
 end
