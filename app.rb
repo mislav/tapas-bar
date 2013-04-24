@@ -12,6 +12,10 @@ Episode = Struct.new(:num, :dir) do
     end.compact.reverse
   end
 
+  def self.unwatched
+    all.reject(&:watched?)
+  end
+
   def self.find_by_number num
     all.find { |ep| ep.num == num.to_i }
   end
@@ -52,6 +56,10 @@ helpers do
 end
 
 get '/' do
+  erb :index, locals: { episodes: Episode.unwatched }
+end
+
+get '/all' do
   erb :index, locals: { episodes: Episode.all }
 end
 
@@ -92,6 +100,8 @@ end
 __END__
 @@ index
 <h1>RubyTapas</h1>
+<a href="/all">All</a>
+<a href="/">Unwatched</a>
 <ol>
   <% for ep in episodes %>
   <li<%= ep.watched?? ' class=watched' : '' %>>
