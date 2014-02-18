@@ -4,3 +4,6 @@ episodes/
 public/media/
 tmp/
 feed.xml
+.sass-cache
+bin/
+*~
