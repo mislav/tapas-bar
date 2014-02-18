@@ -4,7 +4,7 @@ require 'tempfile'
 
 Episode = Struct.new(:num, :dir) do
   def self.all where = 'episodes'
-    Dir.entries(where).map do |dir|
+    Dir.entries(where).sort.map do |dir|
       if dir =~ /^(\d+)/
         ep_num = $1.to_i
         self.new ep_num, File.join(where, dir)
